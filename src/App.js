@@ -13,21 +13,25 @@ const App = () => {
 		return name.includes(searchInput.toLowerCase());
 	});
 
-	// sorting it
+	// sorting it depending on if it is a name or currency ...
+	let preprocessing = filteredUsers.map((user) => {
+		let formattedCurrency = Number(String(user.currency).replace("$", ""));
+		user.currency = formattedCurrency;
+		return user;
+	});
+
 	if (sortInput) {
-		filteredUsers.sort((a, b) => {
-			if (a[sortInput] < b[sortInput]) {
-				return -1;
-			}
-			if (a[sortInput] > b[sortInput]) {
-				return 1;
-			}
+		preprocessing.sort((a, b) => {
+			if (a[sortInput] < b[sortInput]) return -1;
+			if (a[sortInput] > b[sortInput]) return 1;
 			return 0;
 		});
+	} else {
+		preprocessing = filteredUsers;
 	}
 
 	// Mapping the names
-	let renderUsers = filteredUsers.map((user, index) => {
+	let renderUsers = preprocessing.map((user, index) => {
 		return (
 			<li key={index}>
 				{user.name} - {user.currency}
@@ -54,7 +58,6 @@ const App = () => {
 					value={searchInput}
 					onChange={handleSearchInput}
 				/>
-
 				<select onChange={handleSortOnChange}>
 					<option>--Sort--</option>
 					<option value="name">Name</option>
